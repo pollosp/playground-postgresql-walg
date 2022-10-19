@@ -5,7 +5,7 @@ ENV GOMPLATE_VERSION=v3.11.3
 
 RUN apt update \
     && apt install -y curl
-RUN curl -o /usr/local/bin/gomplate -sSL "https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-arm64"
+RUN curl -o /usr/local/bin/gomplate -sSL "https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-amd64"
 RUN chmod 755 /usr/local/bin/gomplate
 
 COPY --from=wal-g /wal-g /
@@ -15,7 +15,10 @@ RUN mkdir -p /etc/postgresql/ \
     && sed -ri "s/^#archive_mode = off/archive_mode = {{.Env.ARCHIVE_MODE}}/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_timeout = 0/archive_timeout = {{.Env.ARCHIVE_TIMEOUT}}/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_command = ''/archive_command = '\/wal-g wal-push %p'/" /etc/postgresql/postgresql.conf.tmpl \
-    && sed -ri "s/^#restore_command = ''/restore_command = '\/wal-g wal-fetch %f %p'/" /etc/postgresql/postgresql.conf.tmpl
+    && sed -ri "s/^#restore_command = ''/restore_command = '\/bin\/restore_command.sh %f %p'/" /etc/postgresql/postgresql.conf.tmpl
+
+ADD restore_command.sh /bin/restore_command.sh
+RUN chmod +x /bin/restore_command.sh
 
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod u+x /docker-entrypoint.sh

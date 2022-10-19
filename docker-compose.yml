@@ -21,7 +21,7 @@ services:
         ports:
         - "5432:5432"
         volumes:
-        #- ./volumes/postgres/:/var/lib/postgresql/data/
+        - ./volumes/postgres/:/var/lib/postgresql/data/
         - ./keys/:/keys/
 
     postgres2:
@@ -43,7 +43,7 @@ services:
             ARCHIVE_MODE: 'off'
             #WALG_PGP_KEY_PATH: /keys/wal-g-test-1.private
         volumes:
-        #- ./volumes/postgres2/:/var/lib/postgresql/data/
+        - ./volumes/postgres2/:/var/lib/postgresql/data/
         - ./keys/:/keys/
 
     s3:
