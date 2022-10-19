@@ -3,4 +3,4 @@ set -e
 
 cd "$(dirname "$0")/../"
 
-docker build ./docker-image/wal-g/ -t stephaneklein/wal-g:v2.0.1-buster
+docker build ./docker-image/wal-g/ -t stephaneklein/wal-g:v2.0.1-bullseye

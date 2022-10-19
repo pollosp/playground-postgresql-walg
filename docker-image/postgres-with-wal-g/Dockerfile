@@ -1,13 +1,17 @@
-FROM stephaneklein/wal-g:v2.0.1-debian AS wal-g
-FROM postgres:12.2-alpine
+FROM stephaneklein/wal-g:v2.0.1-bullseye AS wal-g
+FROM postgres:12-bullseye
 
-RUN apk update \
-    && apk add gomplate 
+ENV GOMPLATE_VERSION=v3.11.3
+
+RUN apt update \
+    && apt install -y curl
+RUN curl -o /usr/local/bin/gomplate -sSL "https://github.com/hairyhenderson/gomplate/releases/download/${GOMPLATE_VERSION}/gomplate_linux-arm64"
+RUN chmod 755 /usr/local/bin/gomplate
 
 COPY --from=wal-g /wal-g /
 
 RUN mkdir -p /etc/postgresql/ \
-    && cp /usr/local/share/postgresql/postgresql.conf.sample /etc/postgresql/postgresql.conf.tmpl \
+    && cp /usr/share/postgresql/postgresql.conf.sample /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_mode = off/archive_mode = {{.Env.ARCHIVE_MODE}}/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_timeout = 0/archive_timeout = {{.Env.ARCHIVE_TIMEOUT}}/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_command = ''/archive_command = '\/wal-g wal-push %p'/" /etc/postgresql/postgresql.conf.tmpl \

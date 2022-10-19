@@ -1,4 +1,4 @@
-FROM golang:buster AS builder
+FROM golang:bullseye AS builder
 
 ENV WALG_VERSION=v2.0.1
 ENV BROTLI_VERSION=v1.0.9
@@ -27,5 +27,5 @@ RUN set -ex \
      && install main/pg/wal-g / \
      && /wal-g --help
 
-FROM debian:buster
+FROM debian:bullseye
 COPY --from=builder /wal-g /
