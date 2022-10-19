@@ -1,10 +1,10 @@
-FROM golang:1.14.1-alpine3.11 AS builder
+FROM golang:buster AS builder
 
-ENV WALG_VERSION=v0.2.15
-ENV BROTLI_VERSION=v1.0.7
+ENV WALG_VERSION=v2.0.1
+ENV BROTLI_VERSION=v1.0.9
 
 RUN set -ex \
-     && apk add --no-cache wget cmake git build-base bash
+     && apt-get update && apt-get install -y wget cmake git build-essential bash
 
 RUN set -ex \
      && cd /tmp \
@@ -27,5 +27,5 @@ RUN set -ex \
      && install main/pg/wal-g / \
      && /wal-g --help
 
-FROM alpine:3.11.5
+FROM debian:buster
 COPY --from=builder /wal-g /

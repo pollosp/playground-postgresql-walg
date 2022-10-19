@@ -1,8 +1,8 @@
-FROM stephaneklein/wal-g:v0.2.15-alpine3.11.5 AS wal-g
+FROM stephaneklein/wal-g:v2.0.1-debian AS wal-g
 FROM postgres:12.2-alpine
 
 RUN apk update \
-    && apk add gomplate
+    && apk add gomplate 
 
 COPY --from=wal-g /wal-g /
 
