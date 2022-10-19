@@ -14,11 +14,14 @@ RUN mkdir -p /etc/postgresql/ \
     && cp /usr/share/postgresql/postgresql.conf.sample /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_mode = off/archive_mode = {{.Env.ARCHIVE_MODE}}/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#archive_timeout = 0/archive_timeout = {{.Env.ARCHIVE_TIMEOUT}}/" /etc/postgresql/postgresql.conf.tmpl \
-    && sed -ri "s/^#archive_command = ''/archive_command = '\/wal-g wal-push %p'/" /etc/postgresql/postgresql.conf.tmpl \
+    && sed -ri "s/^#archive_command = ''/archive_command = '\/bin\/archive_command.sh %p'/" /etc/postgresql/postgresql.conf.tmpl \
     && sed -ri "s/^#restore_command = ''/restore_command = '\/bin\/restore_command.sh %f %p'/" /etc/postgresql/postgresql.conf.tmpl
 
 ADD restore_command.sh /bin/restore_command.sh
 RUN chmod +x /bin/restore_command.sh
+
+ADD archive_command.sh /bin/archive_command.sh
+RUN chmod +x /bin/archive_command.sh
 
 ADD docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod u+x /docker-entrypoint.sh
